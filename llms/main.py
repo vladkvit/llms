@@ -2279,7 +2279,8 @@ def print_status():
 
 
 def home_llms_path(filename):
-    home_dir = os.getenv("LLMS_HOME", os.path.join(os.getenv("HOME"), ".llms"))
+    default_home = os.path.join(os.path.expanduser("~"), ".llms")
+    home_dir = os.getenv("LLMS_HOME", default_home)
     relative_path = os.path.join(home_dir, filename)
     # return resolved full absolute path
     return os.path.abspath(os.path.normpath(relative_path))
