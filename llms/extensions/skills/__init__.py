@@ -36,10 +36,10 @@ def skill(name: Annotated[str, "skill name"], file: Annotated[str | None, "skill
             file = file[len(location) + 1 :]
         if not os.path.exists(os.path.join(location, file)):
             return f"Error: File {file} not found in skill {name}. Available files: {', '.join(skill.get('files', []))}"
-        with open(os.path.join(location, file)) as f:
+        with open(os.path.join(location, file), encoding="utf-8") as f:
             return f.read()
 
-    with open(os.path.join(location, "SKILL.md")) as f:
+    with open(os.path.join(location, "SKILL.md"), encoding="utf-8") as f:
         content = f.read()
 
         files = skill.get("files")
