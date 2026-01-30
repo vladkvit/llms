@@ -247,6 +247,12 @@
             "api": "http://127.0.0.1:1234/v1",
             "models": {}
         },
+        "openai-local": {
+            "enabled": false,
+            "npm": "openai-local",
+            "api": "http://localhost:8000/v1",
+            "api_key": "$OPENAI_LOCAL_API_KEY"
+        },
         "google": {
             "enabled": true,
             "safety_settings": [
@@ -365,21 +371,6 @@
         "moonshotai": {
             "enabled": true
         },
-        "nvidia": {
-            "enabled": true,
-            "modalities": {
-                "image": {
-                    "name": "NVIDIA Gen AI",
-                    "npm": "nvidia/image",
-                    "height": 1024,
-                    "width": 1024,
-                    "cfg_scale": 3.5,
-                    "mode": "base",
-                    "samples": 1,
-                    "steps": 50
-                }
-            }
-        },
         "huggingface": {
             "enabled": true
         },
@@ -393,6 +384,21 @@
                 "image": {
                     "name": "OpenRouter Image",
                     "npm": "openrouter/image"
+                }
+            }
+        },
+        "nvidia": {
+            "enabled": true,
+            "modalities": {
+                "image": {
+                    "name": "NVIDIA Gen AI",
+                    "npm": "nvidia/image",
+                    "height": 1024,
+                    "width": 1024,
+                    "cfg_scale": 3.5,
+                    "mode": "base",
+                    "samples": 1,
+                    "steps": 50
                 }
             }
         }

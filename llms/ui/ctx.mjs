@@ -1,7 +1,7 @@
 
 import { reactive, markRaw } from 'vue'
 import { EventBus, humanize, combinePaths } from "@servicestack/client"
-import { storageObject, isHtml } from './utils.mjs'
+import { storageObject, isHtml, sanitizeHtml } from './utils.mjs'
 
 export class ExtensionScope {
     constructor(ctx, id) {
@@ -126,7 +126,7 @@ export class ExtensionScope {
 }
 
 export class AppContext {
-    constructor({ app, routes, ai, fmt, utils, marked }) {
+    constructor({ app, routes, ai, fmt, utils, marked, markedFallback }) {
         this.app = app
         this.routes = routes
         this.ai = ai
@@ -134,6 +134,7 @@ export class AppContext {
         this.utils = utils
         this._components = {}
         this.marked = marked
+        this.markedFallback = markedFallback
 
         this.state = reactive({})
         this.events = new EventBus()
@@ -296,17 +297,16 @@ export class AppContext {
         console.log('toggleTop', name, toggle, this.layout.top, this.layout.top === name)
         return this.layout.top === name
     }
-    togglePath(path, toggle) {
+    togglePath(path, { left = true } = {}) {
         const currentPath = this.router.currentRoute.value?.path
-        console.log('togglePath', path, currentPath, toggle)
+        console.log('togglePath', path, currentPath, left)
         if (currentPath != path) {
-            if (toggle === undefined) {
-                toggle = true
-            }
             this.router.push({ path })
         }
-        this.toggleLayout('left', toggle)
-        return toggle
+        if (left !== undefined) {
+            this.toggleLayout('left', left)
+        }
+        return left
     }
     setThreadHeaders(components) {
         Object.assign(this.threadHeaderComponents, components)
@@ -397,7 +397,19 @@ export class AppContext {
             const header = content.substring(3, headerEnd).trim()
             content = '<div class="frontmatter">' + header + '</div>\n' + content.substring(headerEnd + 3)
         }
-        return this.marked.parse(content || '')
+        let html = content || ''
+        try {
+            html = this.marked.parse(content || '')
+        } catch (e) {
+            console.log('Failed to parse markdown, using fallback', e)
+            try {
+                html = this.markedFallback.parse(content || '')
+            } catch (e2) {
+                console.log('Failed to parse markdown, using raw content', e2)
+                html = content || ''
+            }
+        }
+        return sanitizeHtml(html)
     }
 
     renderContent(content) {

@@ -1,6 +1,6 @@
 # Multi-stage build for llms-py
-FROM oven/bun:latest as bun
-FROM python:3.11-slim as builder
+FROM oven/bun:latest AS bun
+FROM python:3.11-slim AS builder
 
 # Set working directory
 WORKDIR /app
@@ -33,6 +33,7 @@ WORKDIR /app
 # Install system dependencies and dotnet-sdk 10.0
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
+    git \
     && wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
     && dpkg -i packages-microsoft-prod.deb \
     && rm packages-microsoft-prod.deb \
